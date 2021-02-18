@@ -5,12 +5,10 @@ date: "2/9/2021"
 output:
   flexdashboard::flex_dashboard:
     storyboard: true
-    theme: cosmo
+    theme: bootstrap
 ---
 
 ### How do string quartet covers differ from the original tracks?
-
-## Comparing String Quartet Covers to the Original Tracks
 
 The corpus I want to delve into is Vitamin String Quartet's covers of popular songs. As their discography is quite large, I cannot analyze all their music, so I will focus on a few playlist/albums. I will mainly be using tracks from "Best of Vitamin String Quartet", and then taking more tracks by Vitamin String Quartet from my personal playlists, as I would like to take a look at some of my personal favorites.
 
@@ -22,7 +20,9 @@ In using a specific artist for analyzing string quartet covers, there will likel
 
 Some tracks that I imagine will be atypical are "Little Lion Man" and "Mr. Brightside". The way they chose to change the sound of the instruments is quite far from the originals, where in most cases the general melodies of the track remain the same. Some tracks I think will be typical are "Weird Science" and "Bad Guy". While the instrumentalization is, naturally, changed to only four string instruments, every melody in the originals is clearly recognizable in the covers.
 
+
 ### Valence, Energy and Loudness in String Quartet Covers compared to their Original Versions
+
 
 ```{r}
 library(tidyverse)
@@ -44,7 +44,7 @@ stringvsoriginal %>%
   facet_wrap(~category)+
   theme_light()
 ```
+
 ***
 Comparing valence, energy and loudness shows us how having only a string quartet as the performers of the piece changes the mood of a song. The graphs below show us this difference, making it clear that especially the energy of a song is quite different in a string quartet version. It also seems most string quartet versions are not as loud. For these graphs, I used a playlist I made of 104 covers by Vitamin String Quartet, and a playlist I made of the original versions of these 104 songs.
-
 
