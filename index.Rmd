@@ -5,7 +5,7 @@ date: "2/9/2021"
 output:
   flexdashboard::flex_dashboard:
     storyboard: true
-    theme: bootstrap
+    theme: cerulean
 ---
 
 ### How do string quartet covers differ from the original tracks?
