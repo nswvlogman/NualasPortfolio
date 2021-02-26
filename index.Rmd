@@ -10,21 +10,21 @@ output:
 
 ### How do string quartet covers differ from the original tracks?
 
-The corpus I want to delve into is Vitamin String Quartet's covers of popular songs. As their discography is quite large, I cannot analyze all their music, so I will focus on a few playlist/albums. I will mainly be using tracks from "Best of Vitamin String Quartet", and then taking more tracks by Vitamin String Quartet from my personal playlists, as I would like to take a look at some of my personal favorites.
+The corpus I will delve into is **Vitamin String Quartet**'s covers of popular songs. As their discography is quite large, I cannot analyze all their music, so I will focus on a random selection of 104 tracks. These tracks have been added to a playlist, while their original versions have been added to a seperate playlist. This way, the two comparisons are only of the tracks and their originals.
 
 I chose this corpus because I love string quartet music. I play violin and cello myself and thus am personally attached to the type of instruments used, but I also think having a group of four instruments makes it possible to hear each instrument individually whilst being able to appreciate how they sound together. The layers of the music can each be distinctly heard. Covering popular music gives a creative twist to the original tracks, while showing people that instruments generally associated with classical music are very versatile and can even motivate people to also go and listen to classical music. 
 
-The most natural comparison points are the original versions of the covered songs. The most obvious differences will likely be acousticness and instrumentalness. I imagine danceability, loudness and energy could differ as well, but they could be higher in either one. I am curious to see whether fundamental parts of a track like the key and tempo will be altered in the covers. 
+The most natural comparison points are the original versions of the covered songs. The most obvious differences will likely be _acousticness and instrumentalness_. I imagine _danceability, loudness and energy_ could differ as well, but they could be higher in either one. I am curious to see whether fundamental parts of a track like the _key and tempo_ will be altered in the covers. 
 
 In using a specific artist for analyzing string quartet covers, there will likely be more coherency between the covers than if I were to take several string quartets. In this sense, it is not entirely representative of all string quartet covers. While the orginal tracks the covers are based on span across several genres, much of it is popular music and therefore it will largely be a comparison to pop music. In this sense, it is not representative of all genres. 
 
-Some tracks that I imagine will be atypical are "Little Lion Man" and "Mr. Brightside". The way they chose to change the sound of the instruments is quite far from the originals, where in most cases the general melodies of the track remain the same. Some tracks I think will be typical are "Weird Science" and "Bad Guy". While the instrumentalization is, naturally, changed to only four string instruments, every melody in the originals is clearly recognizable in the covers.
+Some **tracks that I imagine will be atypical** are "Little Lion Man" and "Mr. Brightside". The way they chose to change the sound of the instruments is quite far from the originals, where in most cases the general melodies of the track remain the same. Some **tracks I think will be typical** are "Weird Science" and "Bad Guy". While the instrumentalization is, naturally, changed to only four string instruments, every melody in the originals is clearly recognizable in the covers.
 
 
-### Valence, Energy and Loudness in String Quartet Covers compared to their Original Versions
+### **Valence, Energy and Loudness** in String Quartet Covers compared to their Original Versions
 
 
-```{r}
+```{r, fig.width=1, fig.height=10}
 library(tidyverse)
 library(spotifyr)
 library(plotly)
@@ -39,9 +39,9 @@ stringvsoriginal <-
   )
 
 stringsoriginal_plot <- stringvsoriginal %>%
-  ggplot(aes(x = valence, y = energy, size = loudness))+
+  ggplot(aes(x = valence, y = energy, color = loudness))+
   geom_point(position = 'jitter', color = '#227788', alpha = 0.6)+
-  geom_rug(size = 0.05)+
+  geom_rug(size = 0.15)+
   facet_wrap(~category)+
   theme_light()
 
@@ -50,9 +50,9 @@ ggplotly(stringsoriginal_plot)
 ```
 
 ***
-Comparing valence, energy and loudness shows us how having only a string quartet as the performers of the piece changes the mood of a song. The graphs below show us this difference, making it clear that especially the energy of a song is quite different in a string quartet version. It also seems most string quartet versions are not as loud. For these graphs, I used a playlist I made of 104 covers by Vitamin String Quartet, and a playlist I made of the original versions of these 104 songs.
+Comparing **valence, energy and loudness** shows us how having only a string quartet as the performers of the piece changes the mood of a song. The graphs below show us this difference, making it clear that especially the **energy of a song is quite different in a string quartet version**. It also seems **most string quartet versions are not as loud**. For these graphs, I used a playlist I made of 104 covers by Vitamin String Quartet, and a playlist I made of the original versions of these 104 songs.
 
-### Differences in pitch visualized in a chromagram
+### **Chromagrams**: Are string quartet versions lower pitched?
 
 #### Chromagram for the original Oasis 'Wonderwall'
 
@@ -82,13 +82,6 @@ wonderwall_orig %>%
   labs(x = "Time (s)", y = NULL, fill = "Magnitude") +
   theme_minimal() +
   scale_fill_viridis_c()
-```
-
-#### Chromagram for Vitamin String Quartet's Rendition of Wonderwall
-```{r}
-library(tidyverse)
-library(spotifyr)
-library(compmus)
 
 wonderwall_vit <- 
   get_tidy_audio_analysis("34JU3sMIMPHfW7UM5niPIv") %>%
@@ -111,15 +104,15 @@ wonderwall_vit %>%
   labs(x = "Time (s)", y = NULL, fill = "Magnitude") +
   theme_minimal() +
   scale_fill_viridis_c()
-  
-  
+
 ```
+
 
 *** 
 
-This side-by-side comparison of the Chromagrams of the original and the string quartet rendition of 'Wonderwall' already show that the pitches in both versions are different. I chose this track from my corpus because the duration of the two versions was so close that I thought they would be easily comparable. From these comparisons, however, it seems that the string quartet version is generally lower pitched than the original. On the next tab, the two will be combined to show their alignment with the dynamic time-warping technique.
+This side-by-side comparison of the chromagrams of the original and the string quartet rendition of 'Wonderwall' already show that the pitches in both versions are different. As a chromagram captures **harmonic and melodic characteristics**, you would expect a cover track to be similar. I chose this track from my corpus because the duration of the two versions was so close that I thought they would be easily comparable. From these comparisons, however, it seems that the **string quartet version is generally lower pitched than the original**. On the next tab, the two will be combined to show their alignment with the dynamic time-warping technique.
 
-### Dynamic Time Warping: The alignment of Oasis's 'Wonderwall' versus its String Quartet cover
+### **Dynamic Time Warping**: The alignment of Oasis's 'Wonderwall' versus its String Quartet cover
 
 ```{r}
 
@@ -165,6 +158,6 @@ compmus_long_distance(
 
 ***
 
-This visualisation proves that it is very difficult to see the similarity of pitches in the two versions of 'Wonderwall'. This leads us to conclude that while one is copying the melodies of the other, they do not align well. Despite this being the clearest option of the different normalisation and distance combinations, the chromagram is still quite unclear.
+With Dynamic Time Warping, we can compare the pitches of the two versions in a single visualisation. If the two tracks have the same pitches, but are performed by two different artist, we can see a diagonal line in this visualisation. In this one, there is no line and it is very difficult to see the similarity of pitches in the two versions of 'Wonderwall'. This leads us to conclude that **while one is copying the melodies of the other, they do not align well**. Despite this being the clearest option of the different normalisation and distance combinations, the chromagram is still quite unclear.
 
 
