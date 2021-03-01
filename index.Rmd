@@ -98,7 +98,7 @@ stringvsoriginal <-
   )
 
 stringsoriginal_plot <- stringvsoriginal %>%
-  ggplot(aes(x = valence, y = energy, color = loudness))+
+  ggplot(aes(x = valence, y = energy, color = loudness, label = track.name))+
   geom_point(position = 'jitter', color = '#227788', alpha = 0.6)+
   geom_rug(size = 0.15)+
   facet_wrap(~category)+
@@ -108,13 +108,10 @@ ggplotly(stringsoriginal_plot)
 
 p <- ggplotly(stringsoriginal_plot + ylab(" ") + xlab(" "))
 x <- list(
-    title = "Valence"
-)
+title = "Valence")
 y <- list(
-    title = "Energy"
-)
-p %>% layout(xaxis = x, yaxis = y)
-
+title = "Energy")
+p %>% layout(xaxis = x, yaxis = y, margin = list(l = 75, b =50))
 ```
 
 ***
