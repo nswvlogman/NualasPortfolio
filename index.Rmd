@@ -83,7 +83,7 @@ Some **tracks that I imagine will be atypical** are "Little Lion Man" and "Mr. B
 ### **Valence, Energy and Loudness** in String Quartet Covers compared to their Original Versions
 
 
-```{r, fig.width=1, fig.height=10}
+```{r}
 library(tidyverse)
 library(spotifyr)
 library(plotly)
@@ -106,6 +106,15 @@ stringsoriginal_plot <- stringvsoriginal %>%
 
 ggplotly(stringsoriginal_plot)
 
+p <- ggplotly(stringsoriginal_plot + ylab(" ") + xlab(" "))
+x <- list(
+    title = "Valence"
+)
+y <- list(
+    title = "Energy"
+)
+p %>% layout(xaxis = x, yaxis = y)
+
 ```
 
 ***
@@ -113,64 +122,8 @@ Comparing **valence, energy and loudness** shows us how having only a string qua
 
 ### **Chromagrams**: Are string quartet versions lower pitched?
 
-#### Chromagram for the original Oasis 'Wonderwall'
-
 ```{r}
-library(tidyverse)
-library(spotifyr)
-library(compmus)
-
-wonderwall_orig <- 
-  get_tidy_audio_analysis("1qPbGZqppFwLwcBC1JQ6Vr") %>%
-  select(segments) %>%
-  unnest(segments) %>%
-  select(start, duration, pitches)
-
-wonderwall_orig %>%
-  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) %>%
-  compmus_gather_chroma() %>%
-  ggplot(
-    aes(
-      x = start + duration / 2,
-      width = duration,
-      y = pitch_class,
-      fill = value
-    )
-  ) +
-  geom_tile() +
-  labs(x = "Time (s)", y = NULL, fill = "Magnitude") +
-  theme_minimal() +
-  scale_fill_viridis_c()
-
-
-
-```
-```{r}
-library(tidyverse)
-library(spotifyr)
-library(compmus)
-
-wonderwall_vit <- 
-  get_tidy_audio_analysis("34JU3sMIMPHfW7UM5niPIv") %>%
-  select(segments) %>%
-  unnest(segments) %>%
-  select(start, duration, pitches)
-
-wonderwall_vit %>%
-  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) %>%
-  compmus_gather_chroma() %>%
-  ggplot(
-    aes(
-      x = start + duration / 2,
-      width = duration,
-      y = pitch_class,
-      fill = value
-    )
-  ) +
-  geom_tile() +
-  labs(x = "Time (s)", y = NULL, fill = "Magnitude") +
-  theme_minimal() +
-  scale_fill_viridis_c()
+knitr::include_graphics("images/ChromagramsCM.jpg")
 ```
 
 
