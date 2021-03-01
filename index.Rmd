@@ -1,7 +1,7 @@
 ---
 title: "Nuala's Portfolio"
 author: "Nuala Vlogman"
-date: "09/02/2021"
+date: " February/March 2021"
 output:
   flexdashboard::flex_dashboard:
     storyboard: true
@@ -98,7 +98,7 @@ stringvsoriginal <-
   )
 
 stringsoriginal_plot <- stringvsoriginal %>%
-  ggplot(aes(x = valence, y = energy, color = loudness, label = track.name))+
+  ggplot(aes(x = valence, y = energy, size = loudness, label = track.name))+
   geom_point(position = 'jitter', color = '#227788', alpha = 0.6)+
   geom_rug(size = 0.15)+
   facet_wrap(~category)+
