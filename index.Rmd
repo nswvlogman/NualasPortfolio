@@ -7,6 +7,65 @@ output:
     storyboard: true
     theme: cerulean
 ---
+### Now that we have compared string quartet covers to their originals, let's **compare a cover to itself**.
+
+```{r, echo = FALSE, message = FALSE, fig.dim = c(12, 6)}
+library(tidyverse)
+library(spotifyr)
+library(compmus)
+
+dmp <-
+  get_tidy_audio_analysis("3g3dvWzQovAuuySinsq99k") %>%
+  compmus_align(bars, segments) %>%
+  select(bars) %>%
+  unnest(bars) %>%
+  mutate(
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "acentre", norm = "manhattan"
+      )
+  ) %>%
+  mutate(
+    timbre =
+      map(segments,
+        compmus_summarise, timbre,
+        method = "mean"
+      )
+  )
+bind_rows(
+  dmp %>%
+    compmus_self_similarity(pitches, "aitchison") %>%
+    mutate(d = d / max(d), type = "Chroma"),
+  dmp %>%
+    compmus_self_similarity(timbre, "euclidean") %>%
+    mutate(d = d / max(d), type = "Timbre")
+) %>%
+  mutate() %>%
+  ggplot(
+    aes(
+      x = xstart + xduration / 2,
+      width = xduration,
+      y = ystart + yduration / 2,
+      height = yduration,
+      fill = d
+    )
+  ) +
+  geom_tile() +
+  coord_fixed() +
+  facet_wrap(~type) +
+  scale_fill_viridis_c(guide = "none") +
+  theme_classic() +
+  labs(x = "", y = "")
+
+```
+
+***
+These self-similarity matrices compare the chroma (pitches) and timbre (character) of Vitamin String Quartet's rendition of the Oingo Boingo classic 'Dead Man's Party'. The **visualisation on the left represents chroma**, showing us **at which points the same pitches appear in the track**. The **one on the right shows us the same thing for timbre**, which is based on several factors like harmonic structure, frequency and intensity. Timbre gives us the "tone color" or "tone quality" of an instrument, which distinguishes it from other instruments.
+
+In these visualisations, we see several diagonal lines. They are most clear in the one comparing **chroma**. These **lines represent paths that define similar segments**. When you listen to the track while looking at the matrix, you can see that the first small diagonal paths are where short melodies repeat, while the longer, very clear ones are a repeat of a longer melody segment. The **bright, perpendicular lines show a sudden new section**. This is also visible in the track, as this is the point where an entirely new melody starts.
+
+In the **timbre** matrix, we cannot see too many clear paths. We do, however, see **bright lines representing novelty, and a checkerboard pattern which shows us homogeneity**. As this is a string quartet cover, the instrumentation is all the same four instruments, and they are all string instruments. This will likely be the cause of the checkerboard pattern. The bright lines could represent the points where the certain instruments either come in, or stop playing.
 
 ### How do string quartet covers differ from the original tracks?
 
@@ -83,6 +142,14 @@ wonderwall_orig %>%
   theme_minimal() +
   scale_fill_viridis_c()
 
+
+
+```
+```{r}
+library(tidyverse)
+library(spotifyr)
+library(compmus)
+
 wonderwall_vit <- 
   get_tidy_audio_analysis("34JU3sMIMPHfW7UM5niPIv") %>%
   select(segments) %>%
@@ -104,13 +171,12 @@ wonderwall_vit %>%
   labs(x = "Time (s)", y = NULL, fill = "Magnitude") +
   theme_minimal() +
   scale_fill_viridis_c()
-
 ```
 
 
 *** 
 
-This side-by-side comparison of the chromagrams of the original and the string quartet rendition of 'Wonderwall' already show that the pitches in both versions are different. As a chromagram captures **harmonic and melodic characteristics**, you would expect a cover track to be similar. I chose this track from my corpus because the duration of the two versions was so close that I thought they would be easily comparable. From these comparisons, however, it seems that the **string quartet version is generally lower pitched than the original**. On the next tab, the two will be combined to show their alignment with the dynamic time-warping technique.
+This comparison of the chromagrams of the original and the string quartet rendition of 'Wonderwall' already show that the pitches in both versions are different. As a chromagram captures **harmonic and melodic characteristics**, you would expect a cover track to be similar. I chose this track from my corpus because the duration of the two versions was so close that I thought they would be easily comparable. From these comparisons, however, it seems that the **string quartet version is generally lower pitched than the original**. On the next tab, the two will be combined to show their alignment with the dynamic time-warping technique.
 
 ### **Dynamic Time Warping**: The alignment of Oasis's 'Wonderwall' versus its String Quartet cover
 
