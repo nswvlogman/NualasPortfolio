@@ -83,7 +83,7 @@ Some **tracks that I imagine will be atypical** are "Little Lion Man" and "Mr. B
 ### **Valence, Energy and Loudness** in String Quartet Covers compared to their Original Versions
 
 
-```{r}
+```{r, fig.dim = c(8,10)}
 library(tidyverse)
 library(spotifyr)
 library(plotly)
@@ -115,7 +115,7 @@ p %>% layout(xaxis = x, yaxis = y, margin = list(l = 75, b =50))
 ```
 
 ***
-Comparing **valence, energy and loudness** shows us how having only a string quartet as the performers of the piece changes the mood of a song. The graphs below show us this difference, making it clear that especially the **energy of a song is quite different in a string quartet version**. It also seems **most string quartet versions are not as loud**. For these graphs, I used a playlist I made of 104 covers by Vitamin String Quartet, and a playlist I made of the original versions of these 104 songs.
+Comparing **valence, energy and loudness** shows us how having only a string quartet as the performers of the piece changes the mood of a song. The graphs below show us this difference, making it clear that especially the **energy of a song is quite different in a string quartet version**. It also seems **most string quartet versions are not as loud**. For these graphs, I used a playlist I made of 104 covers by Vitamin String Quartet, and a playlist I made of the original versions of these 104 songs. When hovering over the graphs, you can see the track names and the exact value of valence, energy and loudness per track.
 
 ### **Chromagrams**: Are string quartet versions lower pitched?
 
