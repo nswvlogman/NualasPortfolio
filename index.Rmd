@@ -62,6 +62,12 @@ In using a specific artist for analyzing string quartet covers, there will likel
 
 Some **tracks that I imagine will be atypical** are "Little Lion Man" and "Mr. Brightside". The way they chose to change the sound of the instruments is quite far from the originals, where in most cases the general melodies of the track remain the same. Some **tracks I think will be typical** are "Weird Science" and "Bad Guy". While the instrumentalization is, naturally, changed to only four string instruments, every melody in the originals is clearly recognizable in the covers.
 
+***
+```{r, fig.width=3, fig.height=6}
+knitr::include_graphics("images/derekstein.jpg")
+```
+
+
 
 ### **Valence, Energy and Loudness** in String Quartet Covers compared to their Original Versions
 
