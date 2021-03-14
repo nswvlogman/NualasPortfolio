@@ -1,5 +1,5 @@
 ---
-title: "Nuala's Portfolio"
+title: "String Quartet Covers of Popular Songs"
 author: "Nuala Vlogman"
 date: " February/March 2021"
 output:
@@ -7,48 +7,18 @@ output:
     storyboard: true
     theme: cerulean
 ---
-
-### Is the **key** of a piece changed when it is rewritten for a string quartet?
+### How does the **tempo** change when adapting a piece for a string quartet?
 
 ```{r}
-library(tidyverse)
-library(spotifyr)
-library(compmus)
-library(plotly)
-
-vitamincovers <- get_playlist_audio_features("", "08Lc4a3EBvhYdNB6vxIi9X")
-originals <- get_playlist_audio_features("", "2t3gPIJo0eRhp1Uspbt5bQ")
-
-stringsorig <-
-  bind_rows(
-    vitamincovers %>% mutate(category = "Vitamin String Quartet"),
-    originals %>% mutate(category = "Original Tracks")
-  )
-
-key_comp <- stringsorig%>%
-  select(playlist_name, key_mode)%>%
-  group_by(playlist_name, key_mode)%>%
-  mutate(n=n())%>%
-  unique()%>%
-  group_by(key_mode)%>%
-  mutate(total=sum(n))%>%
-  mutate(percent=round((n/total)*100))
-
-vizkeys <- ggplot(key_comp, aes(x=key_mode, fill=playlist_name, y = n, 
-                                text = paste("Number of Songs: ", n, "<br>",
-                                            "Percent Songs in Key: ", percent, "%")))+
-  geom_bar(width=0.5, stat = "identity")+
-  scale_fill_manual(values = c("blue", "pink"))+
-  labs(x="Key", y="Number of Songs") +
-  guides(fill=guide_legend(title="Playlist"))+
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
-  ggtitle("Musical Key Makeup of the String Quartet Covers vs. Their Originals")
-
-ggplotly(vizkeys, tooltip=c("text"))
+knitr::include_graphics("images/TempogramsLBS.jpg")
 ```
+
 ***
-**Musical key** describes the scale on which a song is based, meaning that most of the notes in a song will come from the scale of that key.In this bar plot, we can see that for the different keys, the number of songs in the playlist of Vitamin String Quartet covers (Vitamin for CompMusic) is not the same as the number of originals (Originals for CompMusic) in that same key. As the Vitamin String Quartet playlist only contains the covers of the songs on the Originals playlist, and no others, this means that the **keys of several songs have to have been changed when transitioning to their string quartet version**.
+As I was examining my corpus's tempo, I saw that there are no clear outliers, and both the Vitamin String Quartet Covers playlist and the Originals Playlist stayed within roughly the same range. Upon closer look, however, I found that the highest and lowest tempo songs did not match across playlist. For example, the highest tempo song in the string quartet versions was 'Little Black Submarines'. This one was not particularly high ranking in the Originals. This is why I thought it would be interesting to compare tempograms of these two versions.
+
+In the original 'Little Black Submarines' by The Black Keys, you can see that there is a very obvious sound change at around 130 seconds. There is a short pause and then a distorted guitar. This is clearly visible in the tempogram, where you can see it is having difficulty determining the tempo there, and it therefore looks like a vague gap in the piece. After this first change, the song goes back to the melody it had before, but with different instrumentation and it sounds like the tempo is slightly higher. This change is also visible in the tempogram, where you can see the lines shift so that they do not align perfectly with the part before 130 seconds.
+
+According to Spotify, the tempo of the Vitamin String Quartet version of 'Little Black Submarines' is a little over double the BPM of the original. When listening to both, I can imagine it, as the string quartet version has strings playing in the background that make it sounds faster than the very basic instrumentation of this part of the original. Something that is visible in both tempograms is the change when the song turns to more of a rock song. The tempogram for Vitamin String Quartet also shows this sudden change at around 130 seconds.
 
 ### How do string quartet covers differ from the original tracks?
 
@@ -225,3 +195,44 @@ In these visualisations, we see several diagonal lines. They are most clear in t
 
 In the **timbre** matrix, we cannot see too many clear paths. We do, however, see **bright lines representing novelty, and a checkerboard pattern which shows us homogeneity**. As this is a string quartet cover, the instrumentation is all the same four instruments, and they are all string instruments. This will likely be the cause of the checkerboard pattern. The bright lines could represent the points where the certain instruments either come in, or stop playing.
 
+### Is the **key** of a piece changed when it is rewritten for a string quartet?
+
+```{r}
+library(tidyverse)
+library(spotifyr)
+library(compmus)
+library(plotly)
+
+vitamincovers <- get_playlist_audio_features("", "08Lc4a3EBvhYdNB6vxIi9X")
+originals <- get_playlist_audio_features("", "2t3gPIJo0eRhp1Uspbt5bQ")
+
+stringsorig <-
+  bind_rows(
+    vitamincovers %>% mutate(category = "Vitamin String Quartet"),
+    originals %>% mutate(category = "Original Tracks")
+  )
+
+key_comp <- stringsorig%>%
+  select(playlist_name, key_mode)%>%
+  group_by(playlist_name, key_mode)%>%
+  mutate(n=n())%>%
+  unique()%>%
+  group_by(key_mode)%>%
+  mutate(total=sum(n))%>%
+  mutate(percent=round((n/total)*100))
+
+vizkeys <- ggplot(key_comp, aes(x=key_mode, fill=playlist_name, y = n, 
+                                text = paste("Number of Songs: ", n, "<br>",
+                                            "Percent Songs in Key: ", percent, "%")))+
+  geom_bar(width=0.5, stat = "identity")+
+  scale_fill_manual(values = c("blue", "pink"))+
+  labs(x="Key", y="Number of Songs") +
+  guides(fill=guide_legend(title="Playlist"))+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  ggtitle("Musical Key Makeup of the String Quartet Covers vs. Their Originals")
+
+ggplotly(vizkeys, tooltip=c("text"))
+```
+***
+**Musical key** describes the scale on which a song is based, meaning that most of the notes in a song will come from the scale of that key.In this bar plot, we can see that for the different keys, the number of songs in the playlist of Vitamin String Quartet covers (Vitamin for CompMusic) is not the same as the number of originals (Originals for CompMusic) in that same key. As the Vitamin String Quartet playlist only contains the covers of the songs on the Originals playlist, and no others, this means that the **keys of several songs have to have been changed when transitioning to their string quartet version**.
