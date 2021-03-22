@@ -106,9 +106,6 @@ categor_knn <-
 categor_knn %>% get_conf_mat() %>% autoplot(type = "mosaic")
 
 ```
-```{r}
-categor_knn %>% get_pr()
-```
 
 
 ***
@@ -116,7 +113,7 @@ In this confusion matrix, we look at a classifier's predictions of which song wi
 
 I experimented with leaving particular audio features out. For some cases, valence for example, this did lead to more accuracy, but it would not be representative to leave important features out.
 
-**For the Originals playlist, the precision was 0.750, while the recall was 0.9. For the Vitamin String Quartet playlist the precision was 0.875, while the recall was 0.7.** While a human would immediately be able to tell whether or not the song was only played by string instruments, the classifier did a decent job.
+**For the Originals playlist, the precision was 0.750, while the recall was 0.9. For the Vitamin String Quartet playlist the precision was 0.875, while the recall was 0.7.** While a human would immediately be able to tell whether or not the song was only played by string instruments, the classifier still did a decent job.
 
 
 ### How do string quartet covers differ from the original tracks?
