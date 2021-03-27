@@ -7,114 +7,6 @@ output:
     storyboard: true
     theme: cerulean
 ---
-### Can a classifier determine the difference between string quartet covers and their original tracks?
-
-```{r}
-library(tidyverse)
-library(ggdendro)
-library(tidymodels)
-library(heatmaply)
-library(spotifyr)
-library(compmus)
-
-get_conf_mat <- function(fit) {
-  outcome <- .get_tune_outcome_names(fit)
-  fit %>% 
-    collect_predictions() %>% 
-    conf_mat(truth = outcome, estimate = .pred_class)
-}  
-
-get_pr <- function(fit) {
-  fit %>% 
-    conf_mat_resampled() %>% 
-    group_by(Prediction) %>% mutate(precision = Freq / sum(Freq)) %>% 
-    group_by(Truth) %>% mutate(recall = Freq / sum(Freq)) %>% 
-    ungroup() %>% filter(Prediction == Truth) %>% 
-    select(class = Prediction, precision, recall)
-}  
-
-vsqm <- get_playlist_audio_features("spotify", "08Lc4a3EBvhYdNB6vxIi9X")
-orim <- get_playlist_audio_features("spotify", "2t3gPIJo0eRhp1Uspbt5bQ")
-categor <-
-  bind_rows(
-    vsqm %>% mutate(playlist = "Vitamin String Quartet") %>% slice_head(n = 20),
-    orim %>% mutate(playlist = "Originals") %>% slice_head(n = 20),
-  ) 
-
-categor_features <-
-  categor %>%  # For your portfolio, change this to the name of your corpus.
-  add_audio_analysis() %>% 
-  mutate(
-    playlist = factor(playlist),
-    segments = map2(segments, key, compmus_c_transpose),
-    pitches =
-      map(
-        segments,
-        compmus_summarise, pitches,
-        method = "mean", norm = "manhattan"
-      ),
-    timbre =
-      map(
-        segments,
-        compmus_summarise, timbre,
-        method = "mean",
-      )
-  ) %>%
-  mutate(pitches = map(pitches, compmus_normalise, "clr")) %>%
-  mutate_at(vars(pitches, timbre), map, bind_rows) %>%
-  unnest(cols = c(pitches, timbre))
-
-categor_recipe <-
-  recipe(
-    playlist ~
-      danceability +
-      energy +
-      loudness +
-      valence +
-      speechiness +
-      acousticness +
-      instrumentalness +
-      liveness +
-      tempo +
-      duration +
-      C + `C#|Db` + D + `D#|Eb` +
-      E + `F` + `F#|Gb` + G +
-      `G#|Ab` + A + `A#|Bb` + B +
-      c01 + c02 + c03 + c04 + c05 + c06 +
-      c07 + c08 + c09 + c10 + c11 + c12,
-    data = categor_features,          # Use the same name as the previous block.
-  ) %>%
-  step_center(all_predictors()) %>%
-  step_scale(all_predictors())      # Converts to z-scores.
-  # step_range(all_predictors())    # Sets range to [0, 1].
-
-categor_cv <- categor_features %>% vfold_cv(5)
-
-knn_model <-
-  nearest_neighbor(neighbors = 1) %>%
-  set_mode("classification") %>% 
-  set_engine("kknn")
-categor_knn <- 
-  workflow() %>% 
-  add_recipe(categor_recipe) %>% 
-  add_model(knn_model) %>% 
-  fit_resamples(
-    categor_cv, 
-    control = control_resamples(save_pred = TRUE)
-  )
-
-categor_knn %>% get_conf_mat() %>% autoplot(type = "mosaic")
-
-```
-
-
-***
-In this confusion matrix, we look at a classifier's predictions of which song will fit which playlist, compared to which playlist it is actually in. For this matrix, I fed the classifier both my Vitamin String Quartet covers playlist and my playlist of the original versions in question. The Spotify API features used to train the classifier are danceability, energy, valence, loudness, speechiness, acousticness, instrumentalness, liveness, tempo, duration and key. 
-
-I experimented with leaving particular audio features out. For some cases, valence for example, this did lead to more accuracy, but it would not be representative to leave important features out.
-
-**For the Originals playlist, the precision was 0.750, while the recall was 0.9. For the Vitamin String Quartet playlist the precision was 0.875, while the recall was 0.7.** While a human would immediately be able to tell whether or not the song was only played by string instruments, the classifier still did a decent job.
-
 
 ### How do string quartet covers differ from the original tracks?
 
@@ -127,6 +19,8 @@ The most natural comparison points are the original versions of the covered song
 In using a specific artist for analyzing string quartet covers, there will likely be more coherency between the covers than if I were to take several string quartets. In this sense, it is not entirely representative of all string quartet covers. While the orginal tracks the covers are based on span across several genres, much of it is popular music and therefore it will largely be a comparison to pop music. In this sense, it is not representative of all genres. 
 
 Some **tracks that I imagine will be atypical** are "Little Lion Man" and "Mr. Brightside". The way they chose to change the sound of the instruments is quite far from the originals, where in most cases the general melodies of the track remain the same. Some **tracks I think will be typical** are "Weird Science" and "Bad Guy". While the instrumentalization is, naturally, changed to only four string instruments, every melody in the originals is clearly recognizable in the covers.
+
+![](https://www.youtube.com/watch?v=fIwTMVOoLsQ)
 
 ***
 ```{r, fig.width=3, fig.height=6}
@@ -345,3 +239,110 @@ As I was examining my corpus's tempo, I saw that there are no clear outliers, an
 In the original 'Little Black Submarines' by The Black Keys, you can see that there is a very obvious sound change at around 130 seconds. There is a short pause and then a distorted guitar. This is clearly visible in the tempogram, where you can see it is having difficulty determining the tempo there, and it therefore looks like a vague gap in the piece. After this first change, the song goes back to the melody it had before, but with different instrumentation and it sounds like the tempo is slightly higher. This change is also visible in the tempogram, where you can see the lines shift so that they do not align perfectly with the part before 130 seconds.
 
 According to Spotify, the tempo of the Vitamin String Quartet version of 'Little Black Submarines' is a little over double the BPM of the original. When listening to both, I can imagine it, as the string quartet version has strings playing in the background that make it sounds faster than the very basic instrumentation of this part of the original. Something that is visible in both tempograms is the change when the song turns to more of a rock song. The tempogram for Vitamin String Quartet also shows this sudden change at around 130 seconds.
+
+### Can a classifier determine the difference between string quartet covers and their original tracks?
+
+```{r}
+library(tidyverse)
+library(ggdendro)
+library(tidymodels)
+library(heatmaply)
+library(spotifyr)
+library(compmus)
+
+get_conf_mat <- function(fit) {
+  outcome <- .get_tune_outcome_names(fit)
+  fit %>% 
+    collect_predictions() %>% 
+    conf_mat(truth = outcome, estimate = .pred_class)
+}  
+
+get_pr <- function(fit) {
+  fit %>% 
+    conf_mat_resampled() %>% 
+    group_by(Prediction) %>% mutate(precision = Freq / sum(Freq)) %>% 
+    group_by(Truth) %>% mutate(recall = Freq / sum(Freq)) %>% 
+    ungroup() %>% filter(Prediction == Truth) %>% 
+    select(class = Prediction, precision, recall)
+}  
+
+vsqm <- get_playlist_audio_features("spotify", "08Lc4a3EBvhYdNB6vxIi9X")
+orim <- get_playlist_audio_features("spotify", "2t3gPIJo0eRhp1Uspbt5bQ")
+categor <-
+  bind_rows(
+    vsqm %>% mutate(playlist = "Vitamin String Quartet") %>% slice_head(n = 20),
+    orim %>% mutate(playlist = "Originals") %>% slice_head(n = 20),
+  ) 
+
+categor_features <-
+  categor %>%  # For your portfolio, change this to the name of your corpus.
+  add_audio_analysis() %>% 
+  mutate(
+    playlist = factor(playlist),
+    segments = map2(segments, key, compmus_c_transpose),
+    pitches =
+      map(
+        segments,
+        compmus_summarise, pitches,
+        method = "mean", norm = "manhattan"
+      ),
+    timbre =
+      map(
+        segments,
+        compmus_summarise, timbre,
+        method = "mean",
+      )
+  ) %>%
+  mutate(pitches = map(pitches, compmus_normalise, "clr")) %>%
+  mutate_at(vars(pitches, timbre), map, bind_rows) %>%
+  unnest(cols = c(pitches, timbre))
+
+categor_recipe <-
+  recipe(
+    playlist ~
+      danceability +
+      energy +
+      loudness +
+      valence +
+      speechiness +
+      acousticness +
+      instrumentalness +
+      liveness +
+      tempo +
+      duration +
+      C + `C#|Db` + D + `D#|Eb` +
+      E + `F` + `F#|Gb` + G +
+      `G#|Ab` + A + `A#|Bb` + B +
+      c01 + c02 + c03 + c04 + c05 + c06 +
+      c07 + c08 + c09 + c10 + c11 + c12,
+    data = categor_features,          # Use the same name as the previous block.
+  ) %>%
+  step_center(all_predictors()) %>%
+  step_scale(all_predictors())      # Converts to z-scores.
+  # step_range(all_predictors())    # Sets range to [0, 1].
+
+categor_cv <- categor_features %>% vfold_cv(5)
+
+knn_model <-
+  nearest_neighbor(neighbors = 1) %>%
+  set_mode("classification") %>% 
+  set_engine("kknn")
+categor_knn <- 
+  workflow() %>% 
+  add_recipe(categor_recipe) %>% 
+  add_model(knn_model) %>% 
+  fit_resamples(
+    categor_cv, 
+    control = control_resamples(save_pred = TRUE)
+  )
+
+categor_knn %>% get_conf_mat() %>% autoplot(type = "mosaic")
+
+```
+
+***
+In this confusion matrix, we look at a classifier's predictions of which song will fit which playlist, compared to which playlist it is actually in. For this matrix, I fed the classifier both my Vitamin String Quartet covers playlist and my playlist of the original versions in question. The Spotify API features used to train the classifier are danceability, energy, valence, loudness, speechiness, acousticness, instrumentalness, liveness, tempo, duration and key. 
+
+I experimented with leaving particular audio features out. For some cases, valence for example, this did lead to more accuracy, but it would not be representative to leave important features out.
+
+**For the Originals playlist, the precision was 0.750, while the recall was 0.9. For the Vitamin String Quartet playlist the precision was 0.875, while the recall was 0.7.** While a human would immediately be able to tell whether or not the song was only played by string instruments, the classifier still did a decent job.
