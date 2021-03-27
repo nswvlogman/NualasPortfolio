@@ -23,7 +23,7 @@ Some **tracks that I imagine will be atypical** are "Little Lion Man" and "Mr. B
 ```{r}
 library(vembedr)
 
-embed_url("https://www.youtube.com/watch?v=fIwTMVOoLsQ")
+embed_youtube("https://www.youtube.com/watch?v=jdFjg1bufNA")
 ```
 
 
