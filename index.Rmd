@@ -18,8 +18,6 @@ The most natural comparison points are the original versions of the covered song
 
 In using a specific artist for analyzing string quartet covers, there will likely be more coherency between the covers than if I were to take several string quartets. In this sense, it is not entirely representative of all string quartet covers. While the orginal tracks the covers are based on span across several genres, much of it is popular music and therefore it will largely be a comparison to pop music. In this sense, it is not representative of all genres. 
 
-Some **tracks that I imagine will be atypical** are "Little Lion Man" and "Mr. Brightside". The way they chose to change the sound of the instruments is quite far from the originals, where in most cases the general melodies of the track remain the same. Some **tracks I think will be typical** are "Weird Science" and "Bad Guy". While the instrumentalization is, naturally, changed to only four string instruments, every melody in the originals is clearly recognizable in the covers.
-
 ***
 ```{r, fig.width=3, fig.height=6}
 knitr::include_graphics("images/derekstein.jpg")
@@ -236,6 +234,13 @@ bind_rows(
 
 ```
 
+***
+In these **self-similarity matrices**, we see which sections of the original Oingo Boingo version of Dead Man's Party are similar in terms of chroma and in terms of timbre. As with the Vitamin String Quartet cover, there are several diagonal lines clearly visible in the matrices.
+
+The **chroma matrix** shows diagonal lines at roughly the same amounts of seconds as the string quartet version, this probably means that **where melodies repeat, this is visible in both versions**, as they use the same melodies. In the string quartet version however, there are more diagonal lines close to each other. This could be because the four instruments in the string quartet version repeat after each other more than in the original.
+
+In the **timbre matrix**, we see that it is a lot more clear than the Vitamin String Quartet version. The diagonal lines are clearer, but the checkerboard pattern is less distinct. This is probably due to the instrumentation. The string quartet version, of course, only uses string instruments in the same family. This makes it harder for the timbre matrix to identify different distinctive qualities of certain instrument signs, as these are all in the same family. In this matrix of the original version, **instruments from different families were used to the differences are easier to see**.
+
 ### Is the **key** of a piece changed when it is rewritten for a string quartet?
 
 ```{r}
@@ -404,10 +409,14 @@ On various levels we have seen that while the string quartet versions are covers
 
 For one, the string quartet versions are much lower energy. This could be due to the different instrumentation, which Spotify registers as being less energetic. They are also less loud, which makes some sense when you think about some of the instruments used in the originals that are not part of a string quartet. 
 
-We've also seen that despite the fact that the covers mimic the melodies in the original, they can change the pitches significantly. In Wonderwall, for example, it seems like the entire cover version is lower pitched than the original. This also means that you cannot compare the covers to their originals with Dynamic Time Warping, as they simply do not align. 
+We've also seen that despite the fact that the covers mimic the melodies in the original, they can change the pitches significantly. In Wonderwall, for example, it seems like the entire cover version is lower pitched than the original. This also means that you cannot compare the covers to their originals with Dynamic Time Warping, as they simply do not align.
+
+Through self-similarity matrices, we have seen that the timbre of the string quartet versions makes a huge difference for how we detect different qualities of the piece. The string quartet's composition is made up of instruments of the same family, so it is hard to determine different timbres, while the orginals use a varying amount of instruments and instrument families.
 
 We've also seen that the key of a piece has been changed for several songs. I am not sure why this is, but it is an interesting idea. Most of the string quartet covers are very easy to recognize as the original, despite it being in a different key. 
 
 The tempo of a song generally translates to the string quartet version fairly evenly. Even if the overall tempo of a song is not exactly the same, any changes within the original will also be visible changes in the cover.
 
 Last but not least, with all these differences, you would think a classifier can easily determine which piece is the cover and which is the original. A human ear would immediately identify it from the instrumentation (and in most cases, lack of vocals). The classifier does indeed do a pretty good job, but it is not perfect. In this sense, the human ear is better at identifying what is what than the computer.
+
+What I have learned from this, is that it is sometimes easy to see that Vitamin String Quartet mimics the originals in a way that makes it very easy for us to recognize it as the original, even if the qualities of the piece are heavily altered. The main conclusion I draw from this is that in this case, humans detect the differences more easily than a computer using the Spotify API. This could be interesting for future improvements to mainly classifiers, and perhaps the Spotify API itself.
