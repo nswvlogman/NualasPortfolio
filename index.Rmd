@@ -345,7 +345,7 @@ In the original 'Little Black Submarines' by The Black Keys, you can see that th
 
 According to Spotify, the tempo of the Vitamin String Quartet version of 'Little Black Submarines' is a little over double the BPM of the original. When listening to both, I can imagine it, as the string quartet version has strings playing in the background that make it sound faster than the very basic instrumentation of this part of the original. **Something that is visible in both tempograms is the change when the song turns to more of a rock song**. The tempogram for Vitamin String Quartet also shows this sudden change at around 130 seconds.
 
-### Are **beat onset*s** more easily detected in the original or string quartet versions?
+### Are **beat onsets** more easily detected in the original or string quartet versions?
 
 ```{r}
 library(tidyverse)
