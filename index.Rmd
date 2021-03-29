@@ -20,13 +20,6 @@ In using a specific artist for analyzing string quartet covers, there will likel
 
 Some **tracks that I imagine will be atypical** are "Little Lion Man" and "Mr. Brightside". The way they chose to change the sound of the instruments is quite far from the originals, where in most cases the general melodies of the track remain the same. Some **tracks I think will be typical** are "Weird Science" and "Bad Guy". While the instrumentalization is, naturally, changed to only four string instruments, every melody in the originals is clearly recognizable in the covers.
 
-```{r}
-library(vembedr)
-
-embed_youtube("https://www.youtube.com/watch?v=jdFjg1bufNA")
-```
-
-
 ***
 ```{r, fig.width=3, fig.height=6}
 knitr::include_graphics("images/derekstein.jpg")
@@ -190,6 +183,59 @@ In these visualisations, we see several diagonal lines. They are most clear in t
 
 In the **timbre** matrix, we cannot see too many clear paths. We do, however, see **bright lines representing novelty, and a checkerboard pattern which shows us homogeneity**. As this is a string quartet cover, the instrumentation is all the same four instruments, and they are all string instruments. This will likely be the cause of the checkerboard pattern. The bright lines could represent the points where the certain instruments either come in, or stop playing.
 
+### Will a Self-Similarity Matrix for the original track show the same patterns?
+
+```{r, echo = FALSE, message = FALSE, fig.dim = c(12, 6)}
+library(tidyverse)
+library(spotifyr)
+library(compmus)
+
+dmpo <-
+  get_tidy_audio_analysis("2h47SG8bNphmicAll4H9RV") %>%
+  compmus_align(bars, segments) %>%
+  select(bars) %>%
+  unnest(bars) %>%
+  mutate(
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "acentre", norm = "manhattan"
+      )
+  ) %>%
+  mutate(
+    timbre =
+      map(segments,
+        compmus_summarise, timbre,
+        method = "mean"
+      )
+  )
+bind_rows(
+  dmpo %>%
+    compmus_self_similarity(pitches, "aitchison") %>%
+    mutate(d = d / max(d), type = "Chroma"),
+  dmpo %>%
+    compmus_self_similarity(timbre, "euclidean") %>%
+    mutate(d = d / max(d), type = "Timbre")
+) %>%
+  mutate() %>%
+  ggplot(
+    aes(
+      x = xstart + xduration / 2,
+      width = xduration,
+      y = ystart + yduration / 2,
+      height = yduration,
+      fill = d
+    )
+  ) +
+  geom_tile() +
+  coord_fixed() +
+  facet_wrap(~type) +
+  scale_fill_viridis_c(guide = "none") +
+  theme_classic() +
+  labs(x = "", y = "")
+
+```
+
 ### Is the **key** of a piece changed when it is rewritten for a string quartet?
 
 ```{r}
@@ -351,3 +397,17 @@ In this confusion matrix, we look at a classifier's predictions of which song wi
 I experimented with leaving particular audio features out. For some cases, valence for example, this did lead to more accuracy, but it would not be representative to leave important features out.
 
 **For the Originals playlist, the precision was 0.750, while the recall was 0.9. For the Vitamin String Quartet playlist the precision was 0.875, while the recall was 0.7.** While a human would immediately be able to tell whether or not the song was only played by string instruments, the classifier still did a decent job.
+
+### Conclusions: What differences have we seen?
+
+On various levels we have seen that while the string quartet versions are covers, and keep the main melodies of a song, they differ greatly.
+
+For one, the string quartet versions are much lower energy. This could be due to the different instrumentation, which Spotify registers as being less energetic. They are also less loud, which makes some sense when you think about some of the instruments used in the originals that are not part of a string quartet. 
+
+We've also seen that despite the fact that the covers mimic the melodies in the original, they can change the pitches significantly. In Wonderwall, for example, it seems like the entire cover version is lower pitched than the original. This also means that you cannot compare the covers to their originals with Dynamic Time Warping, as they simply do not align. 
+
+We've also seen that the key of a piece has been changed for several songs. I am not sure why this is, but it is an interesting idea. Most of the string quartet covers are very easy to recognize as the original, despite it being in a different key. 
+
+The tempo of a song generally translates to the string quartet version fairly evenly. Even if the overall tempo of a song is not exactly the same, any changes within the original will also be visible changes in the cover.
+
+Last but not least, with all these differences, you would think a classifier can easily determine which piece is the cover and which is the original. A human ear would immediately identify it from the instrumentation (and in most cases, lack of vocals). The classifier does indeed do a pretty good job, but it is not perfect. In this sense, the human ear is better at identifying what is what than the computer.
